@@ -82,17 +82,17 @@
       </el-menu>
     </el-col>
   </el-row>
+</template>
 
-  <script>
-    export default {
-      methods: {
-        handleOpen(key, keyPath) {
-          console.log(key, keyPath);
-        },
-        handleClose(key, keyPath) {
-          console.log(key, keyPath);
-        }
+<script>
+  export default {
+    methods: {
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
       }
     }
-  </script>
-</template>
+  }
+</script>
