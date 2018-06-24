@@ -18,6 +18,8 @@
 <script>
   import UserAPI from '../api/user_api.js';
 
+  import md5 from 'js-md5';
+
   export default {
     data() {
       return {
@@ -45,7 +47,7 @@
         this.$refs.AccountFrom.validate((valid) => {
           if (valid) {
             this.loading = true;
-            let loginParams = {username: this.account.username, pwd: this.account.pwd};
+            let loginParams = {username: this.account.username, password: md5(this.account.pwd)};
             UserAPI.login(loginParams).then(function (result) {
               that.loading = false;
               if (result.resultCode=="0") {
