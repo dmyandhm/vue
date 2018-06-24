@@ -85,8 +85,16 @@
 </template>
 
 <script>
+  import menuApi from '@/api/menu';
+
   export default {
+    created() {
+      this.initMenu();
+    },
     methods: {
+      initMenu() {
+        menuApi.getMenu().then(data=>console.log(data));
+      },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
