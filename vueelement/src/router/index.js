@@ -5,9 +5,8 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export const constantRouterMap = [
-  {path: '/',component: () => import('@/components/HelloWorld'), hidden: true},
+  {path: '/',  component: () => import('@/components/HelloWorld'), hidden: true},
   { path: '/login', component: () => import('@/components/Login'), hidden: true },
-  { path: '/menu', component: () => import('@/components/menu'), hidden: true },
 ]
 
 export default new Router({
