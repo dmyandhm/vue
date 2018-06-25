@@ -9,6 +9,23 @@ export const constantRouterMap = [
   { path: '/login', component: () => import('@/components/Login'), hidden: true },
 ]
 
-export default new Router({
+let router=new Router({
   routes: constantRouterMap,
 })
+
+/*登录拦截器*/
+router.beforeEach((to, from, next) => {
+  if (to.path.startsWith('/login')) {
+    window.localStorage.removeItem('userInfo')
+    next()
+  } else {
+    let user = JSON.parse(window.localStorage.getItem('userInfo'))
+    if (!user) {
+      next({path: '/login'})
+    } else {
+      next()
+    }
+  }
+})
+
+export default router
