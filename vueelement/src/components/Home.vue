@@ -45,7 +45,7 @@
                 <span slot="title" >{{menu.text}}</span>
               </template>
 
-              <el-menu-item  v-for="subMenu in menu.children" :index="subMenu.id" :route="subMenu.href" >{{subMenu.text}}</el-menu-item>
+              <el-menu-item  v-for="(subMenu, index) in menu.children" :index="subMenu.id" :route="subMenu.href" :key="index">{{subMenu.text}}</el-menu-item>
             </el-submenu>
           </template>
         </el-menu>
