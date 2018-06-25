@@ -79,19 +79,19 @@ public class LoginController {
      */
     @RequestMapping(value = "/login",method= RequestMethod.POST)
     @ResponseBody
-    public Map<String,String> login(@RequestBody  String params,  HttpServletRequest request, HttpServletResponse response){
-        Map<String, String>result=new HashMap<>();
+    public Map<String,Object> login(@RequestBody  String params,  HttpServletRequest request, HttpServletResponse response){
+        Map<String, Object>result=new HashMap<>();
         JSONObject parObject= JSON.parseObject(params);
         String username = parObject.getString("username");
         String password = parObject.getString("password");
         if (StrUtil.isEmpty(username)) {
             result.put("resultCode", "-1001");
-            result.put("error_msg", "请输入用户名");
+            result.put("resultMsg", "请输入用户名");
             return result;
         }
         if (StrUtil.isEmpty(password)) {
             result.put("resultCode", "-1002");
-            result.put("error_msg", "请输入密码");
+            result.put("resultMsg", "请输入密码");
             return result;
         }
 //        _logger.info("Login [{}] - username[{}] - password[{}]",ipUtil.getIpAddr(request),username,password);
@@ -129,14 +129,10 @@ public class LoginController {
         Map<String, Object>parMap=new HashMap<>();
             parMap.put("username",username);
             parMap.put("password",password);
-            Map<String, String>loginLogicResult=loginService.loginLogic(parMap,request,response);
-            result.put("resultCode",loginLogicResult.get("resultCode"));
-            result.put("resultMsg",loginLogicResult.get("resultMsg"));
+            Map<String, Object>loginLogicResult=loginService.loginLogic(parMap,request,response);
+            result.putAll(loginLogicResult);
         return result;
     }
-
-
-
 
     /**
      * 退出登陆
@@ -144,9 +140,9 @@ public class LoginController {
      * @return
      */
     @RequestMapping("/loginout")
-    public String loginOut(HttpServletRequest request){
+    @ResponseBody
+    public void loginOut(HttpServletRequest request){
         request.getSession().removeAttribute("userInfo");
-        return "/login";
     }
 
 
