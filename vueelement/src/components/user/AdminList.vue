@@ -149,10 +149,10 @@
       showAddDialog: function () {
         this.addFormVisible = true;
 //        this.addForm = {
-//          name:
-        this.$refs['a \'\',\n' +
-        '//          username: \'\'\n' +
-        '//        };ddForm'].resetFields();
+//          name: '',
+//          username: ''
+//        };
+        this.$refs['addForm'].resetFields();
       },
       //新增
       addSubmit: function () {
@@ -163,7 +163,6 @@
             that.$message.success({showClose: true, message: '新增成功', duration: 2000});
             that.addFormVisible = false;
             that.handleSearch();
-
           }
         });
       },
