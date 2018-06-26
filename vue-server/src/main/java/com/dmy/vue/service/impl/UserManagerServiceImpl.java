@@ -43,9 +43,6 @@ public class UserManagerServiceImpl implements UserManagerService {
      * @return
      */
     @Override
-    @Cacheable(value = "lirong_gascard_", key = "'getUserListByExampleAndPage_pageNo'+ " +
-            "#jsonParam.getString('pageNo')+ '_pageSize'+#jsonParam.getString('pageSize')+'_roleType'+ #jsonParam.getString('roleType')+ '_username'+" +
-            "#jsonParam.getString('username')+ '_name'+#jsonParam.getString('name')")
     public List<Users> getUserListByExampleAndPage(JSONObject jsonParam) {
         Example example=new Example(Users.class);
         Example.Criteria createCriteria = example.createCriteria();
@@ -88,7 +85,6 @@ public class UserManagerServiceImpl implements UserManagerService {
      * @return
      */
     @Override
-    @Cacheable(value = "lirong_gascard_",key="'usercount_roleType'+#param.get('roleType')+'_username'+#param.get('username')+'_name'+#param.get('name')")
     public Integer getCountByExample(Map<String, Object> param) {
         try{
             Example example=new Example(Users.class);
@@ -120,7 +116,6 @@ public class UserManagerServiceImpl implements UserManagerService {
      */
     @Override
     public Users getUserById(@NonNull Integer userid) {
-        System.out.println("---------"+userid+"缓存失效，从DB取数据----------");
         return userMapper.selectByPrimaryKey(userid);
     }
 
@@ -156,7 +151,6 @@ public class UserManagerServiceImpl implements UserManagerService {
      * @return
      */
     @Override
-    @CacheEvict(value="lirong_gascard_",key="'usercount*'",beforeInvocation=true)
     public Integer deleteUser(@NonNull Integer userid) {
 
         return userMapper.deleteByPrimaryKey(userid);
@@ -204,17 +198,7 @@ public class UserManagerServiceImpl implements UserManagerService {
      * @return
      */
     @Override
-    @CacheEvict(value="lirong_gascard_",key="'userMenuListByUserId_'+#userId",beforeInvocation=true)
     public void deleteUserMenu(Integer userId) {
-        /*try{
-            Example example=new Example(UserMenu.class);
-            Example.Criteria createCriteria = example.createCriteria();
-            createCriteria.andEqualTo("userId",userId);
-            return userMenuMapper.deleteByExample(example);
-        }catch (Exception e){
-            _logger.error("【权限管理模块】删除用户菜单关联异常，错误信息：" + e.getMessage());
-            return null;
-        }*/
         Example example=new Example(UserMenu.class);
         Example.Criteria createCriteria = example.createCriteria();
         createCriteria.andEqualTo("userId",userId);
@@ -228,7 +212,6 @@ public class UserManagerServiceImpl implements UserManagerService {
      * @return
      */
     @Override
-    @CachePut(value = "lirong_gascard_",key="'userMenuListByUserId_'+#userId")
     public Integer addUserMenu(UserMenu userMenu) {
         return userMenuMapper.insertSelective(userMenu);
     }
