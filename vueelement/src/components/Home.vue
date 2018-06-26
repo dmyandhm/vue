@@ -109,7 +109,7 @@
           that.loading = true;
           UserAPI.loginout().then(function (result) {
             that.loading = false;
-            localStorage.removeItem('userInfo');
+            sessionStorage.removeItem('userInfo');
             that.$router.push('/login');
           }, function (err) {
             that.loading = false;
@@ -123,7 +123,7 @@
       }
     },
     mounted() {
-      let user = localStorage.getItem('userInfo');
+      let user = sessionStorage.getItem('userInfo');
       if (user) {
         user = JSON.parse(user);
         this.username = user.username || '';

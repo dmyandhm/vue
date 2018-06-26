@@ -9,4 +9,8 @@ export default {
   loginout:params => {
     return Config.POST('/api/user/loginout', params)
   },
+  //管理员列表
+  getAdminList:params => {
+    return Config.POST('/api/userManager/userTable', params)
+  },
 }

@@ -51,7 +51,7 @@
             UserAPI.login(loginParams).then(function (result) {
               that.loading = false;
               if (result.resultCode=="0") {
-                localStorage.setItem('userInfo', JSON.stringify(result.userInfo));
+                sessionStorage.setItem('userInfo', JSON.stringify(result.userInfo));
                 that.$router.push({path: '/'});
               } else {
                 that.$message.error({showClose: true, message: result.errmsg || '登录失败', duration: 2000});
