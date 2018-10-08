@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public interface LoginService {
     List<Users> getUserByUserName(String userName);
-    Map<String,String> loginLogic(Map<String, Object> param, HttpServletRequest request, HttpServletResponse response);
+    Map<String,Object> loginLogic(Map<String, Object> param, HttpServletRequest request, HttpServletResponse response);
     Users updateUserByPK(Users user, String repeatPassword);
 
 }

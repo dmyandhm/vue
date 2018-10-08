@@ -47,8 +47,8 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public Map<String, String> loginLogic(Map<String, Object>param, HttpServletRequest request, HttpServletResponse response) {
-        Map<String, String>result=new HashMap<>();
+    public Map<String, Object> loginLogic(Map<String, Object>param, HttpServletRequest request, HttpServletResponse response) {
+        Map<String, Object>result=new HashMap<>();
         String userName = param.get("username")+"";
         String passWord = param.get("password")+"";
         Boolean loginFlag=false;
@@ -67,6 +67,7 @@ public class LoginServiceImpl implements LoginService {
                     HttpSession session = request.getSession();
                     session.setAttribute("userInfo", user);
                     result.put("resultCode", "0");
+                    result.put("userInfo", user);
                     break;
                 }
             }

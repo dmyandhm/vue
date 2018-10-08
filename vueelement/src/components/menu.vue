@@ -4,7 +4,7 @@
       <h5>自定义颜色</h5>
       <el-menu
         default-active="2"
-        class="el-menu-vertical-demo"
+        class="el-menu el-menu-vertical-demo"
         @open="handleOpen"
         @close="handleClose"
         background-color="#545c64"

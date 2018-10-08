@@ -6,6 +6,8 @@ import router from './router'
 import axios from 'axios'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import '@/assets/iconfont.css'
+import '@/assets/main.css'
 import store from './store';
 
 
@@ -20,5 +22,12 @@ new Vue({
   store,
   components: { App },
   template: '<App/>',
+  //vue启动前清除缓存user信息
+ /* beforeCreate() {
+    let user=localStorage.getItem("userInfo");
+    if(user){
+      window.localStorage.removeItem('userInfo');
+    }
+  },*/
   render: h => h(App)
 })

@@ -1,0 +1,230 @@
+package com.dmy.vue.service.impl;
+
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.dmy.vue.dao.UserMapper;
+import com.dmy.vue.dao.UserMenuMapper;
+import com.dmy.vue.domain.UserMenu;
+import com.dmy.vue.domain.Users;
+import com.dmy.vue.service.UserManagerService;
+import com.github.pagehelper.PageRowBounds;
+import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author: daimengying
+ * @Date: 2018/5/21 18:55
+ * @Description:
+ */
+@Service
+public class UserManagerServiceImpl implements UserManagerService {
+    private Logger _logger = LoggerFactory.getLogger(this.getClass());
+
+    @Resource
+    private UserMapper userMapper;
+
+    @Resource
+    UserMenuMapper userMenuMapper;
+
+    /**
+     * 管理员列表
+     * @param jsonParam
+     * @return
+     */
+    @Override
+    public List<Users> getUserListByExampleAndPage(JSONObject jsonParam) {
+        Example example=new Example(Users.class);
+        Example.Criteria createCriteria = example.createCriteria();
+        createCriteria.andEqualTo("status",0);
+        String roleType=jsonParam.getString("roleType");
+        String username=jsonParam.getString("username");
+        String name=jsonParam.getString("name");
+        String sortName=jsonParam.getString("sortName");
+        String sortOrder=jsonParam.getString("sortOrder");
+        try{
+            Integer pageNo=Integer.parseInt(StrUtil.isBlank(jsonParam.getString("pageNo"))?"1":jsonParam.getString("pageNo"));//默认第一页
+            Integer pageSize=Integer.parseInt(StrUtil.isBlank(jsonParam.getString("pageSize"))?"10":jsonParam.getString("pageSize"));//默认一页十行
+            if (StrUtil.isNotBlank(roleType)){
+                createCriteria.andEqualTo("roleType",Integer.parseInt(roleType));
+            }
+            if(StrUtil.isNotBlank(username)){
+                createCriteria.andLike("username", "%"+username+"%");
+            }
+            if (StrUtil.isNotBlank(name)){
+                createCriteria.andLike("name", "%"+name+"%");
+            }
+            if(StrUtil.isNotBlank(sortName)&&StrUtil.isNotBlank(sortOrder)){
+                example.setOrderByClause(sortName+"  "+sortOrder);
+            }else{
+                example.setOrderByClause("create_time  desc");
+            }
+            List<Users> getUserListByExampleAndPage=userMapper.selectByExampleAndRowBounds(example,new PageRowBounds((pageNo-1)*pageSize, pageSize));
+            return getUserListByExampleAndPage;
+        }catch (Exception e){
+            _logger.error("【权限管理模块】管理员列表异常，错误信息：" + e.getMessage());
+            return null;
+        }
+
+
+    }
+
+    /**
+     * 根据条件查询users表总数
+     * @param param
+     * @return
+     */
+    @Override
+    public Integer getCountByExample(Map<String, Object> param) {
+        try{
+            Example example=new Example(Users.class);
+            Example.Criteria createCriteria = example.createCriteria();
+            createCriteria.andEqualTo("status",0);
+            String roleType=param.get("roleType")+  "";
+            String username=param.get("username")+"";
+            String name=param.get("name")+"";
+            if (StrUtil.isNotBlank(roleType)){
+                createCriteria.andEqualTo("roleType",Integer.parseInt(roleType));
+            }
+            if(StrUtil.isNotBlank(username)){
+                createCriteria.andEqualTo("username",username);
+            }
+            if (StrUtil.isNotBlank(name)){
+                createCriteria.andEqualTo("name",name);
+            }
+            return userMapper.selectCountByExample(example);
+        }catch (Exception e){
+            _logger.error("【权限管理模块】获取用户数异常，错误信息：" + e.getMessage());
+            return 0;
+        }
+    }
+
+    /**
+     * 根据id获取user
+     * @param userid
+     * @return
+     */
+    @Override
+    public Users getUserById(@NonNull Integer userid) {
+        return userMapper.selectByPrimaryKey(userid);
+    }
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @return
+     */
+    @Override
+    public Users updateUserByPK(Users user) {
+        Integer num= userMapper.updateByPrimaryKeySelective(user);
+        if(num<1){
+            throw new   RuntimeException("更新用户信息失败");
+        }else{
+            return user;
+        }
+
+    }
+
+    /**
+     * 添加用户
+     * @param user
+     * @return
+     */
+    @Override
+    public Integer addUser(Users user) {
+        return userMapper.insertSelective(user);
+    }
+
+    /**
+     * 根据userid删除用户
+     * @param userid
+     * @return
+     */
+    @Override
+    public Integer deleteUser(@NonNull Integer userid) {
+
+        return userMapper.deleteByPrimaryKey(userid);
+    }
+
+    /**
+     * 根据userid menuId定位到UserMenu
+     * @param userid
+     * @param menuId
+     * @return
+     */
+    @Override
+    public UserMenu getUserMenuByExample(Integer userid, Integer menuId) {
+        try{
+            Example example=new Example(UserMenu.class);
+            Example.Criteria createCriteria = example.createCriteria();
+            createCriteria.andEqualTo("userId",userid);
+            createCriteria.andEqualTo("menuId",menuId);
+            return userMenuMapper.selectOneByExample(example);
+        }catch (Exception e){
+            _logger.error("【权限管理模块】获取用户菜单关联异常，错误信息：" + e.getMessage());
+            return null;
+        }
+
+    }
+
+    /**
+     * 根据主键Id 更新用户菜单表
+     * @param userMenu
+     * @return
+     */
+    @Override
+    public UserMenu updateUserMenuByPk(UserMenu userMenu) {
+        Integer num= userMenuMapper.updateByPrimaryKeySelective(userMenu);
+        if(num<1){
+            throw new   RuntimeException("更新用户菜单表失败");
+        }else{
+            return userMenu;
+        }
+    }
+
+    /**
+     * 根据用户删除他所有的用户菜单关系
+     * @param userId
+     * @return
+     */
+    @Override
+    public void deleteUserMenu(Integer userId) {
+        Example example=new Example(UserMenu.class);
+        Example.Criteria createCriteria = example.createCriteria();
+        createCriteria.andEqualTo("userId",userId);
+        userMenuMapper.deleteByExample(example);
+
+    }
+
+    /**
+     * 插入一条新的用户菜单关系记录
+     * @param userMenu
+     * @return
+     */
+    @Override
+    public Integer addUserMenu(UserMenu userMenu) {
+        return userMenuMapper.insertSelective(userMenu);
+    }
+
+
+    /**
+     * 更新代理商余额异步事件
+     * @param updateUser
+     * @return
+     */
+    @Async
+    @Override
+    public Integer updateAgentBalance(Users updateUser) {
+        return userMapper.updateByPrimaryKeySelective(updateUser);
+    }
+}
